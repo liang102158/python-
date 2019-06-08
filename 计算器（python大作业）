@@ -1,0 +1,381 @@
+import tkinter
+import math
+p = []
+p1 = []
+def pressNum(num):
+    global p
+    p.append(num)
+    if p[0] == '+' or p[0] == '-' or p[0] == '=' or p[0] == '×' or p[0] == '÷' or p[0] == '%'or p[0] == '.':
+        window()
+    else:
+        result1.set(p)
+    return p
+def pressNum1(num):
+    global p1
+    p1.append(num)
+    if p1[0] == '+' or p1[0] == '-' or p1[0] == '=' or p1[0] == '×' or p1[0] == '÷' or p1[0] == '%'or p1[0] == '.':
+        window()
+    else:
+        result3.set(p1)
+    return p1
+def count(k):       #将列表中的元素中的数字符化为可计算的数
+    long = len(k)
+    l0 = []
+    k1 = []
+    for j in range(0, long):
+        num = k[j]
+        if num != '+' and num != '-'and num != '×' and num != '÷' and num != '%'and num != '(' and num != ')'\
+                and num != '='and num != 'log'and num != 'cos'and num != 'sin'and num != 'tan'and num != 'inv'and \
+                num != '√'and num != '!':
+            k1.append(num)
+        else:
+            if len(k1) != 0:
+                b = count3(k1)
+                l0.append(b)
+                l0.append(num)
+            else:
+                l0.append(num)
+            k1 = []
+    return l0
+def count3(k1):
+    l1 = len(k1)
+    b = 0
+    if k1.count('.') != 0:
+        k3 = k1.index('.')
+        l2 = k3 - 1
+        l3 = -1
+        for i in range(0, k3):
+            b += float(k1[i]) * math.pow(10, l2)
+            l2 -= 1
+        for i in range(k3 + 1, l1):
+            b += float(k1[i]) * math.pow(10, l3)
+            l3 -= 1
+    else:
+        l1 = len(k1)
+        for i in range(0, l1):
+            b += int(k1[i]) * math.pow(10, l1 - 1)
+            l1 -= 1
+    return b
+def reckon():
+    k2 = pressNum('=')
+    k3 = count(k2)
+    k4 = count1(k3)
+    k5 = count2(k4)
+    result2.set(k5)
+def reckon1():
+    k2 = pressNum1('=')
+    k3 = count(k2)
+    k4 = count1(k3)
+    k5 = count2(k4)
+    result4.set(k5)
+def count1(l2):         #计算括号里的
+    b = l2.count('(')
+    while b != 0:
+        q = l2.count('log')
+        if q != 0:
+            while q != 0:
+                n = l2.index('log')
+                k2 = []
+                k3 = []
+                a = l2.index(')')
+                for i in range(n + 2, a):
+                    k2.append(l2[i])
+                s = n
+                while l2[s] != '+'and l2[s] != '-'and l2[s] != '×' and l2[s] != '÷' and l2[s] != '%'and l2[s] != '=':
+                    s += 1
+                for i in range(a + 1, s):
+                    k3.append(l2[i])
+                x = count3(k2)
+                y = count3(k3)
+                m = math.log(y, x)
+                while s != n:
+                    l2.pop(n)
+                    s -= 1
+                l2.insert(n, m)
+                q -= 1
+                b -= 1
+        else:
+            l3 = []
+            l4 = l2.count(')')
+            if l4 != 0:
+                a1 = l2.index('(')
+                while l2[a1+1] != ')':
+                    l2.pop(a1)
+                    l3.append(l2[a1])
+
+                l2.pop(a1)
+                l2.pop(a1)
+                s = count2(l3)
+                l2.insert(a1, s)
+                b -= 1
+    return l2
+def count2(k):      #计算符号计算
+    l1 = k
+    operator = ['×', '÷', '%', '+', '-', '']
+    operator1 = ['sin', 'cos', 'tan', 'inv', '!', '√']
+    b = 0
+    a = 0
+    b1 = 0
+    while b1 != 6:
+        j = l1.count(operator1[b1])
+        if j != 0:
+            while j != 0:
+                i = l1.index(operator1[b1])
+                if l1[i] == 'sin':
+                    a1 = l1[i+1]
+                    a1 = math.radians(a1)
+                    d1 = math.sin(a1)
+                    l1.pop(i)
+                    l1.pop(i)
+                    l1.insert(i, d1)
+                elif l1[i] == 'cos':
+                    a1 = l1[i + 1]
+                    a1 = math.radians(a1)
+                    d1 = math.cos(a1)
+                    l1.pop(i)
+                    l1.pop(i)
+                    l1.insert(i, d1)
+                elif l1[i] == 'tan':
+                    a1 = l1[i+1]
+                    a1 = math.radians(a1)
+                    d1 = math.tan(a1)
+                    l1.pop(i)
+                    l1.pop(i)
+                    l1.insert(i, d1)
+                elif l1[i] == 'inv':
+                    e = l1[i-1]
+                    q = l1[i+1]
+                    d1 = math.pow(e, q)
+                    l1.pop(i-1)
+                    l1.pop(i-1)
+                    l1.pop(i-1)
+                    l1.insert(i-1, d1)
+                elif l1[i] == '!':
+                    a1 = l1[i-1]
+                    d = 1
+                    while a1 != 0:
+                        d = d * a1
+                        a1 -= 1
+                    d1 = d
+                    l1.pop(i-1)
+                    l1.pop(i-1)
+                    l1.insert(i-1, d1)
+                elif l1[i] == '√':
+                    a1 = l1[i+1]
+                    d1 = math.sqrt(a1)
+                    l1.pop(i)
+                    l1.pop(i)
+                    l1.insert(i, d1)
+                j -= 1
+        elif j == 0:
+            b1 += 1
+    while b != 5:
+        j = l1.count(operator[b])
+        if j != 0:
+            while j != 0:
+                i = l1.index(operator[b])
+                if l1[i] == '×':
+                    a = l1[i - 1] * l1[i + 1]
+                if l1[i] == '÷':
+                    a = l1[i - 1] / l1[i + 1]
+                if l1[i] == '%':
+                    a = l1[i - 1] % l1[i + 1]
+                if l1[i] == '+':
+                    a = l1[i-1] + l1[i+1]
+                if l1[i] == '-':
+                    a = l1[i-1] - l1[i+1]
+                l1.pop(i - 1)
+                l1.pop(i - 1)
+                l1.pop(i - 1)
+                l1.insert(i - 1, a)
+                j -= 1
+        elif j == 0:
+                b += 1
+    return l1[0]
+def delete1():          #删除一个
+    long = len(p)
+    p.pop(long-1)
+    result1.set(p)
+    result2.set('')
+def delete2():          #删除全部
+    long = len(p)
+    i = 0
+    while long > 0:
+        p.pop(i)
+        long -= 1
+    result1.set(0)
+    result2.set('')
+def delete3():          #删除一个
+    long = len(p1)
+    p1.pop(long-1)
+    result3.set(p1)
+    result4.set('')
+def delete4():          #删除全部
+    long = len(p1)
+    i = 0
+    while long > 0:
+        p1.pop(i)
+        long -= 1
+    result3.set(0)
+    result4.set('')
+def change1():
+    root1.destroy()
+    calculator2()
+def change2():
+    root2.destroy()
+    calculator1()
+def calculator1():
+    global root1
+    global result1
+    global result2
+    root1 = tkinter.Tk()
+    root1.title("standard calculator")
+    root1.minsize(300, 500)
+    root1.resizable(width=False, height=True)
+    result1 = tkinter.StringVar()
+    result1.set(0)      #计算过程
+    result2 = tkinter.StringVar()
+    result2.set('')     #结果
+    label1 = tkinter.Label(root1, font=('微软雅黑', 30), bg='#FFF5EE', bd='9', fg='#828282', anchor='se',
+                           textvariable=result1)
+    label1.place(width=300, height=120)
+    label2 = tkinter.Label(root1, font=('微软雅黑', 30), bg='#F5FFFA', bd='9', fg='black', anchor='se',
+                           textvariable=result2)
+    label2.place(y=120, width=300, height=100)
+    b1 = tkinter.Button(root1, text='1', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('1'))
+    b1.place(x=0, y=220, width=60, height=50)
+    b2 = tkinter.Button(root1, text='2', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('2'))
+    b2.place(x=60, y=220, width=60, height=50)
+    b3 = tkinter.Button(root1, text='3', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('3'))
+    b3.place(x=120, y=220, width=60, height=50)
+    b4 = tkinter.Button(root1, text='4', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('4'))
+    b4.place(x=180, y=220, width=60, height=50)
+    b5 = tkinter.Button(root1, text='5', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('5'))
+    b5.place(x=240, y=220, width=60, height=50)
+    b6 = tkinter.Button(root1, text='6', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('6'))
+    b6.place(x=0, y=270, width=60, height=50)
+    b7 = tkinter.Button(root1, text='7', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('7'))
+    b7.place(x=60, y=270, width=60, height=50)
+    b8 = tkinter.Button(root1, text='8', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('8'))
+    b8.place(x=120, y=270, width=60, height=50)
+    b9 = tkinter.Button(root1, text='9', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('9'))
+    b9.place(x=180, y=270, width=60, height=50)
+    b0 = tkinter.Button(root1, text='0', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('0'))
+    b0.place(x=240, y=270, width=60, height=50)
+    b10 = tkinter.Button(root1, text='+', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('+'))
+    b10.place(x=0, y=320, width=60, height=50)
+    b11 = tkinter.Button(root1, text='-', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('-'))
+    b11.place(x=60, y=320, width=60, height=50)
+    b12 = tkinter.Button(root1, text='×', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('×'))
+    b12.place(x=120, y=320, width=60, height=50)
+    b13 = tkinter.Button(root1, text='÷', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('÷'))
+    b13.place(x=180, y=320, width=60, height=50)
+    b14 = tkinter.Button(root1, text='jump to scientific''\n'' calculator', bg='#F0FFF0', font=('微软雅黑', 10), bd=0.5,
+                         command=lambda: change1())
+    b14.place(x=150, y=420, width=150, height=80)
+    b15 = tkinter.Button(root1, text='.', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('.'))
+    b15.place(x=0, y=370, width=75, height=50)
+    b16 = tkinter.Button(root1, text='=', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=reckon)
+    b16.place(x=225, y=370, width=75, height=50)
+    b17 = tkinter.Button(root1, text='%', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('%'))
+    b17.place(x=240, y=320, width=60, height=50)
+    b18 = tkinter.Button(root1, text='(', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum('('))
+    b18.place(x=75, y=370, width=75, height=50)
+    b19 = tkinter.Button(root1, text=')', bg='#CDC9C9', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum(')'))
+    b19.place(x=150, y=370, width=75, height=50)
+    b18 = tkinter.Button(root1, text='delete', bg='#E6E6FA', font=('微软雅黑', 10), bd=0.5, command=delete1)
+    b18.place(x=0, y=420, width=75, height=80)
+    b19 = tkinter.Button(root1, text='restart', bg='#E6E6FA', font=('微软雅黑', 10), bd=0.5, command=delete2)
+    b19.place(x=75, y=420, width=75, height=80)
+    root1.mainloop()
+def calculator2():
+    global root2
+    global result3
+    global result4
+    root2 = tkinter.Tk()
+    root2.title("scientific calculator")
+    root2.minsize(450, 700)
+    root2.resizable(width=False, height=True)
+    result3 = tkinter.StringVar()
+    result3.set(0)  # 计算过程
+    result4 = tkinter.StringVar()
+    result4.set('')  # 结果
+    label1 = tkinter.Label(root2, font=('微软雅黑', 30), bg='#FFF5EE', bd='9', fg='#828282', anchor='se',
+                           textvariable=result3)
+    label1.place(width=450, height=130)
+    label2 = tkinter.Label(root2, font=('微软雅黑', 30), bg='#F5FFFA', bd='9', fg='black', anchor='se',
+                           textvariable=result4)
+    label2.place(y=130, width=450, height=120)
+    c1 = tkinter.Button(root2, text='inv''\n''(3inv2=9)', bg='grey', font=('微软雅黑', 10), bd=0.5,
+                        command=lambda: pressNum1('inv'))
+    c1.place(x=0, y=350, width=150, height=50)
+    c2 = tkinter.Button(root2, text='√', bg='grey', font=('微软雅黑', 10), bd=0.5,
+                        command=lambda: pressNum1('√'))
+    c2.place(x=150, y=350, width=150, height=50)
+    c3 = tkinter.Button(root2, text='log''\n''(log(10)100=2)', bg='grey', font=('微软雅黑', 10), bd=0.5,
+                        command=lambda: pressNum1('log'))
+    c3.place(x=300, y=350, width=150, height=50)
+    c4 = tkinter.Button(root2, text='sin', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('sin'))
+    c4.place(x=0, y=300, width=90, height=50)
+    c5 = tkinter.Button(root2, text='cos', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('cos'))
+    c5.place(x=90, y=300, width=90, height=50)
+    c6 = tkinter.Button(root2, text='tan', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('tan'))
+    c6.place(x=180, y=300, width=90, height=50)
+    c7 = tkinter.Button(root2, text='!', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('!'))
+    c7.place(x=270, y=300, width=90, height=50)
+    b1 = tkinter.Button(root2, text='1', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('1'))
+    b1.place(x=0, y=450, width=90, height=50)
+    b2 = tkinter.Button(root2, text='2', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('2'))
+    b2.place(x=90, y=450, width=90, height=50)
+    b3 = tkinter.Button(root2, text='3', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('3'))
+    b3.place(x=180, y=450, width=90, height=50)
+    b4 = tkinter.Button(root2, text='4', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('4'))
+    b4.place(x=270, y=450, width=90, height=50)
+    b5 = tkinter.Button(root2, text='5', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('5'))
+    b5.place(x=360, y=450, width=90, height=50)
+    b6 = tkinter.Button(root2, text='6', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('6'))
+    b6.place(x=0, y=500, width=90, height=50)
+    b7 = tkinter.Button(root2, text='7', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('7'))
+    b7.place(x=90, y=500, width=90, height=50)
+    b8 = tkinter.Button(root2, text='8', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('8'))
+    b8.place(x=180, y=500, width=90, height=50)
+    b9 = tkinter.Button(root2, text='9', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('9'))
+    b9.place(x=270, y=500, width=90, height=50)
+    b0 = tkinter.Button(root2, text='0', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('0'))
+    b0.place(x=360, y=500, width=90, height=50)
+    b10 = tkinter.Button(root2, text='+', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('+'))
+    b10.place(x=0, y=250, width=90, height=50)
+    b11 = tkinter.Button(root2, text='-', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('-'))
+    b11.place(x=90, y=250, width=90, height=50)
+    b12 = tkinter.Button(root2, text='×', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('×'))
+    b12.place(x=180, y=250, width=90, height=50)
+    b13 = tkinter.Button(root2, text='÷', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('÷'))
+    b13.place(x=270, y=250, width=90, height=50)
+    b14 = tkinter.Button(root2, text='jump to scientific calculator', bg='#F0FFF0', font=('微软雅黑', 15), bd=0.5,
+                         command=lambda: change2())
+    b14.place(x=0, y=600, width=450, height=100)
+    b15 = tkinter.Button(root2, text='.', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('.'))
+    b15.place(x=360, y=300, width=90, height=50)
+    b16 = tkinter.Button(root2, text='=', bg='grey', font=('微软雅黑', 20), bd=0.5, command=reckon1)
+    b16.place(x=300, y=400, width=150, height=50)
+    b17 = tkinter.Button(root2, text='%', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('%'))
+    b17.place(x=360, y=250, width=90, height=50)
+    b16 = tkinter.Button(root2, text='(', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1('('))
+    b16.place(x=0, y=400, width=150, height=50)
+    b17 = tkinter.Button(root2, text=')', bg='grey', font=('微软雅黑', 20), bd=0.5, command=lambda: pressNum1(')'))
+    b17.place(x=150, y=400, width=150, height=50)
+    b18 = tkinter.Button(root2, text='delete', bg='#E6E6FA', font=('微软雅黑', 10), bd=0.5, command=delete3)
+    b18.place(x=0, y=550, width=225, height=50)
+    b19 = tkinter.Button(root2, text='restart', bg='#E6E6FA', font=('微软雅黑', 10), bd=0.5, command=delete4)
+    b19.place(x=225, y=550, width=225, height=50)
+    root2.mainloop()
+def window():
+    root3 = tkinter.Tk()
+    root3.title("错误！")
+    root3.minsize(30, 40)
+    tkinter.Label(root3, text="计算式错误,请按restart后重新输入").pack()
+    root3.mainloop()
+def main():
+    calculator2()
+if __name__ == "__main__":
+    main()
